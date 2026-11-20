@@ -8,7 +8,7 @@
 - [X] **Environment:** Create a `.env` file to store your `MONGO_URI` connection string and a `PORT` for the server.
 - [X] **Security:** Create a `.gitignore` file and ensure `node_modules/` and `.env` are listed.
 - [ ] **Project Structure:** Your application must be well-structured with separate directories for your database connection logic, Mongoose models, and Express routes.
-    - [ ]server.js (main entry point)
-    - [ ]config/ (or db/) for connection.js
-    - [ ]models/ for Product.js
-    - [ ]routes/ for productRoutes.js
+    - [X] `server.js` (main entry point)
+    - [X] `config/` (or `db/`) for `connection.js`
+    - [X] `models/` for `Product.js`
+    - [X] `routes/` for `productRoutes.js`
