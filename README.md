@@ -12,3 +12,21 @@
     - [X] `config/` (or `db/`) for `connection.js`
     - [X] `models/` for `Product.js`
     - [X] `routes/` for `productRoutes.js`
+
+
+### Schema and Model
+- [ ] In `models/Product.js`, define a productSchema with the following fields and validation rules:
+    - [ ] `name`: String, required.
+    - [ ] `description`: String, required.
+    - [ ] `price`: Number, required, must be greater than 0.
+    - [ ] `category`: String, required.
+    - [ ] `inStock`: Boolean, defaults to true.
+    - [ ] `tags`: An Array of Strings.
+    - [ ] `createdAt`: Date, defaults to the current date and time.
+- [ ] Compile this schema into a model named Product and export it.
+
+
+### Database Connection
+- [X] In your `config/connection.js` file, establish a connection to your MongoDB Atlas database using Mongoose.
+- [X] Handle both successful connections and connection errors gracefully by logging appropriate messages to the console.
+- [X] Execute this connection logic from `server.js`.
