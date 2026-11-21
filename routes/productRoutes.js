@@ -1,5 +1,5 @@
 import express from "express";
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 import Product from "../models/Product.js";
 
 const router = express.Router();
@@ -17,6 +17,8 @@ router.get("/", async (req, res) => {
   }
 });
 
+
+//POST /api/products (Create a Product)
 router.post("/", async (req, res) => {
   try {
     const newProduct = await Product.create(req.body);
@@ -41,13 +43,15 @@ router.post("/", async (req, res) => {
   }
 });
 
+
+//GET /api/products/:id (Read a Single Product)
 router.get("/:id", async (req, res) => {
-    const { id } = req.params;
+  const { id } = req.params;
 
   // helper that checks the format up front
   // rejects badly formatted ids before hitting the database
   if (!mongoose.isValidObjectId(id)) {
-    return res.status(400).json({ error: 'Invalid product ID' });
+    return res.status(400).json({ error: "Invalid product ID" });
   }
 
   try {
@@ -59,6 +63,36 @@ router.get("/:id", async (req, res) => {
 
     res.status(200).json(product);
   } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+
+//PUT /api/products/:id (Update a Product)
+router.put("/:id", async (req, res) => {
+  try {
+    const product = await Product.findByIdAndUpdate(req.params.id, req.body, {
+      returnDocument: "after",
+      //new: true,           // returnDocument: 'after' replaces new: true
+      runValidators: true,
+    });
+
+    if (!product) {
+      return res.status(404).json({ error: "Product not found" });
+    }
+
+    res.json(product);
+  } catch (err) {
+    if (err.name === "ValidationError") {
+      const messages = Object.values(err.errors).map((e) => e.message);
+      return res.status(400).json({ errors: messages });
+    }
+
+    if (err.name === "CastError") {
+      return res.status(400).json({ error: `Invalid value for ${err.path}` });
+    }
+
     console.error(err);
     res.status(500).json({ error: "Server error" });
   }

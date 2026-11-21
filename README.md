@@ -39,7 +39,12 @@
 - [X] Responds with the newly created product and a 201 status code.
 - [X] If validation fails, it should return a 400 status code with a descriptive error message.
 
-### GET /api/products/:id (Read a Single Product)
-- [ ] Retrieves a single product by its _id.
-- [ ] If the product is found, responds with the product object.
-- [ ] If no product is found, responds with a 404 status code.
+#### GET /api/products/:id (Read a Single Product)
+- [X] Retrieves a single product by its `_id`.
+- [X] If the product is found, responds with the product object.
+- [X] If no product is found, responds with a 404 status code.
+
+#### PUT /api/products/:id (Update a Product)
+- [X] Updates a product by its `_id` with the data from `req.body`.
+- [X] Responds with the updated product data (use the { new: true } option).
+- [X] If no product is found to update, responds with a 404 status code.
