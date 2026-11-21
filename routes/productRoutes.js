@@ -4,6 +4,7 @@ import Product from "../models/Product.js";
 
 const router = express.Router();
 
+//==============================Helper Functions=====================================
 //category========================================================================
 function categoryFilter(category) {
   if (category) {
@@ -57,6 +58,30 @@ function sortByFliter(sortBy) {
   return sortByObject;
 }
 
+
+function paginationFilter(page, limit){
+  page = Number(page)
+  limit = Number(limit)
+
+  /*
+    (page || 1): when page is falsy(NaN for something like 'hi' or 0) use 1
+    if a negative number is passed for page that negative number wins ((-5 || 1), 1)
+    (-5, 1) then 1 wins
+  */
+  const pageNum = Math.max((page || 1), 1);//number of pages
+  const limitNum = Math.max((limit || 10), 1);//number of documents for each page
+
+  /*
+    (pageNum(4) - 1), current page is pageNum, so there are pageNum - 1 earlier pages
+    3 * limitNum(3),  skips 9 products
+  */
+  const skipNum = (pageNum - 1) * limitNum; //how many documents to skip
+
+  return [limitNum, skipNum]
+}
+
+
+//================================ROUTES============================================
 //POST /api/products (Create a Product)
 router.post("/", async (req, res) => {
   try {
@@ -166,10 +191,9 @@ router.get("/", async (req, res) => {
     const filter = {};
     // const sort = {};
 
-    const { category, minPrice, maxPrice, sortBy } = req.query;
+    const { category, minPrice, maxPrice, sortBy, page = 1, limit = 10 } = req.query;
 
     if (category) {//add a key only when categoryFilter() returns something to filter on
-      filter.price = price;
       filter.category = categoryFilter(category);
     }
 
@@ -180,7 +204,10 @@ router.get("/", async (req, res) => {
 
     const sort = sortByFliter(sortBy);//empty object passed to sort({}), gives default order
 
-    const products = await Product.find(filter).sort(sort);
+    const pagination = paginationFilter(page, limit)
+    const limitNum = pagination[0]
+    const skipNum = pagination[1]
+    const products = await Product.find(filter).sort(sort).skip(skipNum).limit(limitNum);
 
     res.json(products);
   } catch (err) {

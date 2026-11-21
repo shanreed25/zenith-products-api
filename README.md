@@ -60,6 +60,6 @@
 - [X] `minPrice`: Filter products with a price greater than or equal to this value.
 - [X] `maxPrice`: Filter products with a price less than or equal to this value.
 - [X] `sortBy`: Sort results. For example, price_asc for ascending price or price_desc for descending price.
-- [ ] `page & limit`: For pagination (defaulting to page 1, limit 10).
+- [X] `page & limit`: For pagination (defaulting to page 1, limit 10).
 - [X] Dynamically build the Mongoose query based on which query parameters are provided.
 - [X] Respond with an array of the resulting products.
