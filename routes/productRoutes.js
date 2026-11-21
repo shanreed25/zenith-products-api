@@ -4,18 +4,58 @@ import Product from "../models/Product.js";
 
 const router = express.Router();
 
-//GET /api/products
-// router.get("/", async (req, res) => {
-//   try {
-//     const products = await Product.find();
+//category========================================================================
+function categoryFilter(category) {
+  if (category) {
+    /*
+        for category=electronics
+        returns Electronics
+      */
+    return category[0].toUpperCase() + category.slice(1);
+  }
+}
 
-//     res.status(200).json(products);
-//   } catch (err) {
-//     res
-//       .status(400)
-//       .json({ message: "Error getting products", error: err.message });
-//   }
-// });
+//minPrice and maxPrice==========================================================
+function priceFilter(minPrice, maxPrice) {
+  const price = {};
+
+  if (minPrice || maxPrice) {
+    if (minPrice) {
+      //a new key named $gte: { $gte: 15 }
+      price.$gte = Number(minPrice);
+    }
+
+    if (maxPrice) {
+      //a new key named $lte: { $lte: 250 }
+      price.$lte = Number(maxPrice);
+    }
+  }
+  /*
+      for ?minPrice=15&maxPrice=250
+      returns { '$gte': 15, '$lte': 250 }
+    */
+  return price;
+}
+
+function sortByFliter(sortBy) {
+  const sortByObject = {};
+  if (sortBy) {
+    const sortByArray = sortBy.split("_"); // if it is ?sortBy=price_desc, price_desc becomes ['price', 'desc']
+    const field = sortByArray[0]; // 'price'
+    const order = sortByArray[1]; // 'desc'
+
+    /*
+        with Mongoose 
+        .sort({ price: 1 }) means ascending
+        .sort({ price: -1 }) means descending
+      */
+    const sortOrder = order === "desc" ? -1 : 1;
+    sortByObject[field] = sortOrder;
+    return sortByObject;
+  }
+
+  return sortByObject;
+}
 
 //POST /api/products (Create a Product)
 router.post("/", async (req, res) => {
@@ -124,53 +164,29 @@ router.get("/", async (req, res) => {
         if no sort or filter is sent then they stay empty objects {}
         */
     const filter = {};
-    const sort = {}
+    // const sort = {};
 
     const { category, minPrice, maxPrice, sortBy } = req.query;
-    
-    //category========================================================================
-    if (category) {
-      filter.category = category;
+
+    if (category) {//add a key only when categoryFilter() returns something to filter on
+      filter.price = price;
+      filter.category = categoryFilter(category);
     }
 
-    //minPrice and maxPrice==========================================================
-    /*{ price: { $gte: 20 } } is what will tell MongoDB to 
-     return products where the price field is greater than or equal to 20
-     */
-    if (minPrice || maxPrice) {
-      //creates { price: {} }
-      filter.price = {};
-      //a new key named $gte: { price: { $gte: 20 } }
-      if (minPrice) {
-        filter.price.$gte = Number(minPrice);
-      }
-
-      if (maxPrice) {
-        filter.price.$lte = Number(maxPrice);
-      }
+    const price = priceFilter(minPrice, maxPrice);
+    if (Object.keys(price).length > 0) {//add a key only when priceFilter() returns something to filter on
+      filter.price = price;
     }
 
-    //sortBy============================================================================
-    if(sortBy){
-      const sortByArray = sortBy.split('_');// if it is ?sortBy=price_desc, price_desc becomes ['price', 'desc']
-      const field = sortByArray[0]; // 'price'
-      const order = sortByArray[1]; // 'desc'
-
-      /*
-        with Mongoose 
-        .sort({ price: 1 }) means ascending
-        .sort({ price: -1 }) means descending
-      */
-      const sortOrder = order === 'desc' ? -1 : 1
-      sort[field] = sortOrder
-    }
-
-    // console.log(filter);
+    const sort = sortByFliter(sortBy);//empty object passed to sort({}), gives default order
 
     const products = await Product.find(filter).sort(sort);
 
     res.json(products);
-  } catch (err) {}
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
+  }
 });
 
 export default router;
