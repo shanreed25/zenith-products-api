@@ -15,18 +15,26 @@
 
 
 ### Schema and Model
-- [ ] In `models/Product.js`, define a productSchema with the following fields and validation rules:
-    - [ ] `name`: String, required.
-    - [ ] `description`: String, required.
-    - [ ] `price`: Number, required, must be greater than 0.
-    - [ ] `category`: String, required.
-    - [ ] `inStock`: Boolean, defaults to true.
-    - [ ] `tags`: An Array of Strings.
-    - [ ] `createdAt`: Date, defaults to the current date and time.
-- [ ] Compile this schema into a model named Product and export it.
+- [X] In `models/Product.js`, define a productSchema with the following fields and validation rules:
+    - [X] `name`: String, required.
+    - [X] `description`: String, required.
+    - [X] `price`: Number, required, must be greater than 0.
+    - [X] `category`: String, required.
+    - [X] `inStock`: Boolean, defaults to true.
+    - [X] `tags`: An Array of Strings.
+    - [X] `createdAt`: Date, defaults to the current date and time.
+- [X] Compile this schema into a model named Product and export it.
 
 
 ### Database Connection
 - [X] In your `config/connection.js` file, establish a connection to your MongoDB Atlas database using Mongoose.
 - [X] Handle both successful connections and connection errors gracefully by logging appropriate messages to the console.
-- [X] Execute this connection logic from `server.js`.
+- [X] Execute this connection logic from `server.js`
+
+### API Routes and Logic
+**In `routes/productRoutes.js`, use `express.Router()` to define your API endpoints. The logic for each route should be handled directly within the route file. Implement the following endpoints. All endpoints must handle potential errors with try...catch blocks and return appropriate status codes and JSON responses.**
+
+#### POST /api/products (Create a Product)
+- [ ] Creates a new product based on the `req.body`.
+- [ ] Responds with the newly created product and a 201 status code.
+- [ ] If validation fails, it should return a 400 status code with a descriptive error message.

@@ -1,4 +1,4 @@
-import mongoose, { Schema, model } from "mongoose";
+import { Schema, model } from "mongoose";
 
 const productSchema = new Schema({
   name: {
@@ -12,6 +12,23 @@ const productSchema = new Schema({
   price: {
     type: Number,
     required: [true, "Product price is required"],
+    //custom validator for greater than 0
+    validate: {
+      /*
+        calls the arrow function and passes in the price being saved as value
+        returns true if price is valid otherwise returns false
+        if false an error is added for the price field
+      */
+      validator: (value) => value > 0,
+
+      /*
+        message only gets used when the validator returns false
+        it gets a props object that has details about the failure
+        props.value is the value that failed
+        props.path is the field name
+      */
+      message: (props) => `${props.value} is not valid. Price must be greater than 0`,
+    }
   },
   category: {
     type: String,
@@ -30,6 +47,6 @@ const productSchema = new Schema({
   },
 });
 
-const Product = model.apply("Product", productSchema);
+const Product = model("Product", productSchema);
 
 export default Product;
