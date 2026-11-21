@@ -48,3 +48,8 @@
 - [X] Updates a product by its `_id` with the data from `req.body`.
 - [X] Responds with the updated product data (use the { new: true } option).
 - [X] If no product is found to update, responds with a 404 status code.
+
+#### DELETE /api/products/:id (Delete a Product)
+- [X] Deletes a product by its `_id`.
+- [X] If successful, responds with a success message.
+- [X] If no product is found to delete, responds with a 404 status code.
