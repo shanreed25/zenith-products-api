@@ -124,7 +124,7 @@ router.get("/", async (req, res) => {
         */
     const filter = {};
 
-    const { category, minPrice } = req.query;
+    const { category, minPrice, maxPrice } = req.query;
     if (category) {
       filter.category = category;
     }
@@ -132,11 +132,17 @@ router.get("/", async (req, res) => {
     /*{ price: { $gte: 20 } } is what will tell MongoDB to 
      return products where the price field is greater than or equal to 20
      */
-    if (minPrice) {
+    if (minPrice || maxPrice) {
       //creates { price: {} }
       filter.price = {};
       //a new key named $gte: { price: { $gte: 20 } }
-      filter.price.$gte = Number(minPrice);
+      if (minPrice) {
+        filter.price.$gte = Number(minPrice);
+      }
+
+      if (maxPrice) {
+        filter.price.$lte = Number(maxPrice);
+      }
     }
     // console.log(filter);
 
