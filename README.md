@@ -56,10 +56,10 @@
 
 #### GET /api/products (Read All Products with Advanced Querying)
 **This is the most complex endpoint. It should retrieve all products but also support the following optional query parameters:**
-- [ ] `category`: Filter products by a specific category.
-- [ ] `minPrice`: Filter products with a price greater than or equal to this value.
-- [ ] `maxPrice`: Filter products with a price less than or equal to this value.
-- [ ] `sortBy`: Sort results. For example, price_asc for ascending price or price_desc for descending price.
+- [X] `category`: Filter products by a specific category.
+- [X] `minPrice`: Filter products with a price greater than or equal to this value.
+- [X] `maxPrice`: Filter products with a price less than or equal to this value.
+- [X] `sortBy`: Sort results. For example, price_asc for ascending price or price_desc for descending price.
 - [ ] `page & limit`: For pagination (defaulting to page 1, limit 10).
-- [ ] Dynamically build the Mongoose query based on which query parameters are provided.
-- [ ] Respond with an array of the resulting products.
+- [X] Dynamically build the Mongoose query based on which query parameters are provided.
+- [X] Respond with an array of the resulting products.

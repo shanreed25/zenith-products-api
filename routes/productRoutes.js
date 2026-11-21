@@ -121,14 +121,19 @@ router.get("/", async (req, res) => {
     /*
         dynamically build the query, so the filter object starts empty 
         and only gets keys for the parameters that were sent
+        if no sort or filter is sent then they stay empty objects {}
         */
     const filter = {};
+    const sort = {}
 
-    const { category, minPrice, maxPrice } = req.query;
+    const { category, minPrice, maxPrice, sortBy } = req.query;
+    
+    //category========================================================================
     if (category) {
       filter.category = category;
     }
 
+    //minPrice and maxPrice==========================================================
     /*{ price: { $gte: 20 } } is what will tell MongoDB to 
      return products where the price field is greater than or equal to 20
      */
@@ -144,9 +149,25 @@ router.get("/", async (req, res) => {
         filter.price.$lte = Number(maxPrice);
       }
     }
+
+    //sortBy============================================================================
+    if(sortBy){
+      const sortByArray = sortBy.split('_');// if it is ?sortBy=price_desc, price_desc becomes ['price', 'desc']
+      const field = sortByArray[0]; // 'price'
+      const order = sortByArray[1]; // 'desc'
+
+      /*
+        with Mongoose 
+        .sort({ price: 1 }) means ascending
+        .sort({ price: -1 }) means descending
+      */
+      const sortOrder = order === 'desc' ? -1 : 1
+      sort[field] = sortOrder
+    }
+
     // console.log(filter);
 
-    const products = await Product.find(filter);
+    const products = await Product.find(filter).sort(sort);
 
     res.json(products);
   } catch (err) {}
