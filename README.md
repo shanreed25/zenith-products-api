@@ -35,6 +35,11 @@
 **In `routes/productRoutes.js`, use `express.Router()` to define your API endpoints. The logic for each route should be handled directly within the route file. Implement the following endpoints. All endpoints must handle potential errors with try...catch blocks and return appropriate status codes and JSON responses.**
 
 #### POST /api/products (Create a Product)
-- [ ] Creates a new product based on the `req.body`.
-- [ ] Responds with the newly created product and a 201 status code.
-- [ ] If validation fails, it should return a 400 status code with a descriptive error message.
+- [X] Creates a new product based on the `req.body`.
+- [X] Responds with the newly created product and a 201 status code.
+- [X] If validation fails, it should return a 400 status code with a descriptive error message.
+
+### GET /api/products/:id (Read a Single Product)
+- [ ] Retrieves a single product by its _id.
+- [ ] If the product is found, responds with the product object.
+- [ ] If no product is found, responds with a 404 status code.
