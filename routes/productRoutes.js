@@ -5,18 +5,17 @@ import Product from "../models/Product.js";
 const router = express.Router();
 
 //GET /api/products
-router.get("/", async (req, res) => {
-  try {
-    const products = await Product.find();
+// router.get("/", async (req, res) => {
+//   try {
+//     const products = await Product.find();
 
-    res.status(200).json(products);
-  } catch (err) {
-    res
-      .status(400)
-      .json({ message: "Error getting products", error: err.message });
-  }
-});
-
+//     res.status(200).json(products);
+//   } catch (err) {
+//     res
+//       .status(400)
+//       .json({ message: "Error getting products", error: err.message });
+//   }
+// });
 
 //POST /api/products (Create a Product)
 router.post("/", async (req, res) => {
@@ -43,7 +42,6 @@ router.post("/", async (req, res) => {
   }
 });
 
-
 //GET /api/products/:id (Read a Single Product)
 router.get("/:id", async (req, res) => {
   const { id } = req.params;
@@ -67,7 +65,6 @@ router.get("/:id", async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 });
-
 
 //PUT /api/products/:id (Update a Product)
 router.put("/:id", async (req, res) => {
@@ -99,23 +96,43 @@ router.put("/:id", async (req, res) => {
 });
 
 //DELETE /api/products/:id (Delete a Product)
-router.delete('/:id', async (req, res) => {
+router.delete("/:id", async (req, res) => {
   try {
     const product = await Product.findByIdAndDelete(req.params.id);
 
     if (!product) {
-      return res.status(404).json({ error: 'Product not found' });
+      return res.status(404).json({ error: "Product not found" });
     }
 
-    res.json({ message: 'Product deleted successfully', product });
+    res.json({ message: "Product deleted successfully", product });
   } catch (err) {
-    if (err.name === 'CastError') {
-      return res.status(400).json({ error: 'Invalid product ID' });
+    if (err.name === "CastError") {
+      return res.status(400).json({ error: "Invalid product ID" });
     }
 
     console.error(err);
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: "Server error" });
   }
+});
+
+//GET /api/products (Read All Products with Advanced Querying)
+router.get("/", async (req, res) => {
+  try {
+    /*
+        dynamically build the query, so the filter object starts empty 
+        and only gets keys for the parameters that were sent
+        */
+    const filter = {};
+
+    const { category } = req.query;
+    if (category) {
+      filter.category = category;
+    }
+
+    const products = await Product.find(filter);
+
+    res.json(products);
+  } catch (err) {}
 });
 
 export default router;
