@@ -46,7 +46,8 @@
 
 #### PUT /api/products/:id (Update a Product)
 - [X] Updates a product by its `_id` with the data from `req.body`.
-- [X] Responds with the updated product data (use the { new: true } option).
+- [X] Responds with the updated product data (use the { new: true } option)
+    - used `returnDocument: "after"` instead and `{ new: true }` is there but commited out
 - [X] If no product is found to update, responds with a 404 status code.
 
 #### DELETE /api/products/:id (Delete a Product)

@@ -9,6 +9,6 @@ export default async function connectToDB(){
         
     } catch (err) {
         console.error('Connection Error:', err.message);
-        
+        process.exit(1)
     }
 }
