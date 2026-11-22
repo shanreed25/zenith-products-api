@@ -20,17 +20,22 @@ function categoryFilter(category) {
 function priceFilter(minPrice, maxPrice) {
   const price = {};
 
-  if (minPrice || maxPrice) {
-    if (minPrice) {
-      //a new key named $gte: { $gte: 15 }
-      price.$gte = Number(minPrice);
+  if (minPrice) {
+    const min = Number(minPrice);
+    if (Number.isNaN(min)) {
+      return null; // its not a number
     }
-
-    if (maxPrice) {
-      //a new key named $lte: { $lte: 250 }
-      price.$lte = Number(maxPrice);
-    }
+    price.$gte = min;//a new key named $gte: { $gte: 15 }
   }
+
+  if (maxPrice) {
+    const max = Number(maxPrice);
+    if (Number.isNaN(max)) {
+      return null;// its not a number
+    }
+    price.$lte = max;//a new key named $lte: { $lte: 250 }
+  }
+
   /*
       for ?minPrice=15&maxPrice=250
       returns { '$gte': 15, '$lte': 250 }
@@ -58,18 +63,17 @@ function sortByFliter(sortBy) {
   return sortByObject;
 }
 
-
-function paginationFilter(page, limit){
-  page = Number(page)
-  limit = Number(limit)
+function paginationFilter(page, limit) {
+  page = Number(page);
+  limit = Number(limit);
 
   /*
     (page || 1): when page is falsy(NaN for something like 'hi' or 0) use 1
     if a negative number is passed for page that negative number wins ((-5 || 1), 1)
     (-5, 1) then 1 wins
   */
-  const pageNum = Math.max((page || 1), 1);//number of pages
-  const limitNum = Math.max((limit || 10), 1);//number of documents for each page
+  const pageNum = Math.max(page || 1, 1); //number of pages
+  const limitNum = Math.max(limit || 10, 1); //number of documents for each page
 
   /*
     (pageNum(4) - 1), current page is pageNum, so there are pageNum - 1 earlier pages
@@ -77,9 +81,8 @@ function paginationFilter(page, limit){
   */
   const skipNum = (pageNum - 1) * limitNum; //how many documents to skip
 
-  return [limitNum, skipNum]
+  return [limitNum, skipNum];
 }
-
 
 //================================ROUTES============================================
 //POST /api/products (Create a Product)
@@ -191,23 +194,42 @@ router.get("/", async (req, res) => {
     const filter = {};
     // const sort = {};
 
-    const { category, minPrice, maxPrice, sortBy, page = 1, limit = 10 } = req.query;
+    const {
+      category,
+      minPrice,
+      maxPrice,
+      sortBy,
+      page = 1,
+      limit = 10,
+    } = req.query;
 
-    if (category) {//add a key only when categoryFilter() returns something to filter on
+    if (category) {
+      //add a key only when categoryFilter() returns something to filter on
       filter.category = categoryFilter(category);
     }
 
     const price = priceFilter(minPrice, maxPrice);
-    if (Object.keys(price).length > 0) {//add a key only when priceFilter() returns something to filter on
+
+    if (price === null) {
+      return res
+        .status(400)
+        .json({ error: "minPrice and maxPrice must be numbers" });
+    }
+
+    if (Object.keys(price).length > 0) {
+      //add a key only when priceFilter() returns something to filter on
       filter.price = price;
     }
 
-    const sort = sortByFliter(sortBy);//empty object passed to sort({}), gives default order
+    const sort = sortByFliter(sortBy); //empty object passed to sort({}), gives default order
 
-    const pagination = paginationFilter(page, limit)
-    const limitNum = pagination[0]
-    const skipNum = pagination[1]
-    const products = await Product.find(filter).sort(sort).skip(skipNum).limit(limitNum);
+    const pagination = paginationFilter(page, limit);
+    const limitNum = pagination[0];
+    const skipNum = pagination[1];
+    const products = await Product.find(filter)
+      .sort(sort)
+      .skip(skipNum)
+      .limit(limitNum);
 
     res.json(products);
   } catch (err) {
